@@ -8,31 +8,36 @@ const getMoviesInfo = async () => {
     const myMoviesData = await fetch('https://swapi.dev/api/films/');
     const myMovies = await myMoviesData.json();
     await paintMoviesOnDiv(myMovies);
+    $('#loading').hide();
 };
 
-getMoviesInfo();
+try {
+    getMoviesInfo();
+} catch (error) {
+    console.log('error', error);
+}
+
 
 async function paintMoviesOnDiv(myMovies) {
     $('#movies').empty();
 
     let divMoviesContent = '';
     let cont = 0;
+    let i = 0;
     for (const movie of myMovies.results) {
-        if (cont === 0) {
-            divMoviesContent += '<div class="movie">'
-            divMoviesContent += `<h2>${movie.title}</h2>`;
-            let i = 0;
-            for (const character of movie.characters) {
+        // if (cont === 0) {//esto lo he puesto para pruebas y no hacer muchas peticiones
+        divMoviesContent += '<div class="movie">'
+        divMoviesContent += `<h2>${movie.title}</h2>`;
+        for (const character of movie.characters) {
+            const myCharacterData = await fetch(character);
+            const myCharacter = await myCharacterData.json();
+            divMoviesContent += `<h4 onclick="displayCharacter('id-character-${i}','${character}');">${myCharacter.name}</h4>`;
 
-                const myCharacterData = await fetch(character);
-                const myCharacter = await myCharacterData.json();
-                divMoviesContent += `<h4 onclick="displayCharacter('id-character-${i}','${character}');">${myCharacter.name}</h4>`;
-
-                divMoviesContent += `<div id="id-character-${i}" class="character"></div>`;
-                i++;
-            }
-            divMoviesContent += '</div>';
+            divMoviesContent += `<div id="id-character-${i}" class="character"></div>`;
+            i++;
         }
+        divMoviesContent += '</div>';
+        // }
         cont++;
 
     }
@@ -42,6 +47,7 @@ async function paintMoviesOnDiv(myMovies) {
 }
 
 async function displayCharacter(idDiv, url) {
+    $('#loading').show();
     console.log('id:', idDiv);
     console.log('url:', url);
 
@@ -64,4 +70,5 @@ async function displayCharacter(idDiv, url) {
         divContent += `<p>gender: ${myCharacter.gender}</p>`;
         $('#' + idDiv).append(divContent);
     }
+    $('#loading').hide();
 }
