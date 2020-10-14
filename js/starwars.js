@@ -16,18 +16,52 @@ async function paintMoviesOnDiv(myMovies) {
     $('#movies').empty();
 
     let divMoviesContent = '';
+    let cont = 0;
     for (const movie of myMovies.results) {
-        divMoviesContent += '<div class="movie">'
-        divMoviesContent += `<h2>${movie.title}</h2>`;
-        for (const character of movie.characters) {
-            
-            const myCharacterData = await fetch(character);
-            const myCharacter = await myCharacterData.json();
-            divMoviesContent += `<p>${myCharacter.name}</p>`;
+        if (cont === 0) {
+            divMoviesContent += '<div class="movie">'
+            divMoviesContent += `<h2>${movie.title}</h2>`;
+            let i = 0;
+            for (const character of movie.characters) {
+
+                const myCharacterData = await fetch(character);
+                const myCharacter = await myCharacterData.json();
+                divMoviesContent += `<h4 onclick="displayCharacter('id-character-${i}','${character}');">${myCharacter.name}</h4>`;
+
+                divMoviesContent += `<div id="id-character-${i}" class="character"></div>`;
+                i++;
+            }
+            divMoviesContent += '</div>';
         }
-        divMoviesContent += '</div>';
+        cont++;
+
     }
 
 
     $('#movies').append(divMoviesContent);
+}
+
+async function displayCharacter(idDiv, url) {
+    console.log('id:', idDiv);
+    console.log('url:', url);
+
+    if ($('#' + idDiv).css("display") === 'block') {
+        $('#' + idDiv).css("display", "none");
+    } else {
+        const myCharacterData = await fetch(url);
+        const myCharacter = await myCharacterData.json();
+
+        $('#' + idDiv).empty();
+        $('#' + idDiv).css("display", "block");
+
+        let divContent = '';
+        divContent += `<p>height: ${myCharacter.height}</p>`;
+        divContent += `<p>mass: ${myCharacter.mass}</p>`;
+        divContent += `<p>hair_color: ${myCharacter.hair_color}</p>`;
+        divContent += `<p>skin_color: ${myCharacter.skin_color}</p>`;
+        divContent += `<p>eye_color: ${myCharacter.eye_color}</p>`;
+        divContent += `<p>birth_year: ${myCharacter.birth_year}</p>`;
+        divContent += `<p>gender: ${myCharacter.gender}</p>`;
+        $('#' + idDiv).append(divContent);
+    }
 }

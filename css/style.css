@@ -33,3 +33,12 @@ body {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-radius: 12px;
 }
+
+.character {
+    background-color: lightcyan;
+    display: none;
+    padding: 10px;
+    font-size: small;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-radius: 12px;
+}
